@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:notes/Authentication/register/RegisterUi.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:notes/Dashboard/DasboardUi.dart';
 
 class Login extends StatefulWidget {
   Login({Key? key}) : super(key: key);
@@ -26,7 +28,7 @@ class _LoginState extends State<Login> {
                 animate: true,
                 reverse: false,
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
               Text(
                 'Welcome Back,',
                 style: TextStyle(
@@ -45,36 +47,48 @@ class _LoginState extends State<Login> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blueGrey,width: 2),
-                    
-                    
+              SizedBox(
+                width:MediaQuery.of(context).size.width *0.95,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueGrey,width: 2),
+                      
+                      
+                    ),
+                    prefixIcon: Icon(Icons.email),
                   ),
-                  prefixIcon: Icon(Icons.email),
+                  keyboardType: TextInputType.emailAddress,
                 ),
-                keyboardType: TextInputType.emailAddress,
               ),
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.blueGrey),
-                  ),
-                  prefixIcon: Icon(Icons.lock),
-                ),               
-                obscureText: true,
+              SizedBox(
+                width:MediaQuery.of(context).size.width *0.95,
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.blueGrey),
+                    ),
+                    prefixIcon: Icon(Icons.lock),
+                  ),               
+                  obscureText: true,
+                ),
               ),
          
               SizedBox(height: MediaQuery.of(context).size.height * 0.09),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Dashboard(),
+                            ));
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blueAccent,
                   minimumSize: Size(
@@ -98,7 +112,7 @@ class _LoginState extends State<Login> {
                       Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Login(),
+                              builder: (context) => Register(),
                             ));
                     },child: Text('Register',style: TextStyle(color: Colors.deepPurple),))
               
