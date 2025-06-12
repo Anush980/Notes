@@ -18,6 +18,7 @@ class _RegisterState extends State<Register> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool obscureText = true;
 
   @override
   void _register() {
@@ -92,6 +93,7 @@ class _RegisterState extends State<Register> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.95,
                       child: TextFormField(
+                        obscureText: obscureText,
                         controller: _passwordController,
                         decoration: InputDecoration(
                           labelText: 'Password',
@@ -100,8 +102,20 @@ class _RegisterState extends State<Register> {
                             borderSide: BorderSide(color: Colors.blueGrey),
                           ),
                           prefixIcon: Icon(Icons.lock),
+                          suffixIcon: GestureDetector(onTap: (){
+                            setState(() {
+                              obscureText = !obscureText;
+                            });
+                          },
+                         child: () {
+    if (obscureText) {
+      return const Icon(Icons.visibility_outlined);
+    } else {
+      return const Icon(Icons.visibility_off_outlined);
+    }
+  }()
+                          )
                         ),
-                        obscureText: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Password is required';
@@ -118,6 +132,7 @@ class _RegisterState extends State<Register> {
                       width: MediaQuery.of(context).size.width * 0.95,
                       child: TextFormField(
                         controller: _confirmPasswordController,
+                         obscureText: obscureText,
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
                           border: OutlineInputBorder(
@@ -125,8 +140,9 @@ class _RegisterState extends State<Register> {
                             borderSide: BorderSide(color: Colors.blueGrey),
                           ),
                           prefixIcon: Icon(Icons.lock),
+                         
                         ),
-                        obscureText: true,
+                       
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please confirm your password';
