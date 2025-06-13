@@ -16,7 +16,17 @@ class _NoteEditState extends State<NoteEdit> {
   TextEditingController body = new TextEditingController();
   bool editing = false;
 
-  void add() async {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.editingNote != null) {
+      editing = true;
+      title.text = widget.editingNote!.title;
+      body.text = widget.editingNote!.body;
+    }
+  }
+
+  Future<void> add() async {
     final note = new Note();
     note.title = title.text;
     note.body = body.text;
@@ -36,12 +46,12 @@ class _NoteEditState extends State<NoteEdit> {
     }
   }
 
-  void update() async {
+  Future<void> update() async {
     final note = new Note();
     note.title = title.text;
     note.body = body.text;
     note.id = widget.editingNote!.id;
-    if (note.body == "" || note.title == "" || note.id == "") {
+    if (note.body.isEmpty || note.title.isEmpty || note.id.isEmpty) {
       Toast.info(context, "Empty Note, Skipping update");
 
       Navigator.pop(context);
@@ -57,21 +67,16 @@ class _NoteEditState extends State<NoteEdit> {
     }
   }
 
-  void save() async {
+  Future<void> save() async {
     if (editing) {
-      update();
+      await update();
     } else {
-      add();
+      await add();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.editingNote != null) {
-      editing = true;
-      title.text = widget.editingNote!.title;
-      body.text = widget.editingNote!.body;
-    }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: save,
