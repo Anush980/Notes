@@ -4,7 +4,16 @@ import 'package:notes/Authentication/login/LoginUi.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:notes/Dashboard/DasboardUi.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:notes/api/api.dart';
+import 'package:notes/components/AccountPrompt.dart';
+import 'package:notes/components/ButtonView.dart';
+import 'package:notes/components/EmailInput.dart';
+import 'package:notes/components/FormElement.dart';
+import 'package:notes/components/HeroImage.dart';
+import 'package:notes/components/PasswordInput.dart';
+import 'package:notes/components/TitleView.dart';
 
+import 'package:sonner_flutter/sonner_flutter.dart';
 
 class Register extends StatefulWidget {
   Register({Key? key}) : super(key: key);
@@ -14,16 +23,28 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final _formKey = GlobalKey<FormState>(); 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   final _confirmPasswordController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
   bool obscureText = true;
 
   @override
-  void _register() {
+  void _register() async {
     if (_formKey.currentState!.validate()) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Dashboard()));
+      final registerSuccess = await register(
+        _emailController.text,
+        _passwordController.text,
+      );
+      if (registerSuccess.status) {
+        Toast.success(context, "Register Successful");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (builder) => Login()),
+        );
+      } else {
+        Toast.error(context, registerSuccess.message);
+      }
     }
   }
 
@@ -34,163 +55,90 @@ class _RegisterState extends State<Register> {
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-              LottieBuilder.asset(
-                'assets/Login.json',
-                height: 250,
-                width: 250,
-                repeat: false,
-                animate: true,
-                reverse: false,
+              // Hero iMAGE / Lottie assets
+              HeroImage(),
+
+              // Title and subtitle
+              TitleView(
+                title: "Register Now",
+                subtitle: "Get started by signing up",
               ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.05),
-              Text(
-                'Register Now',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.001),
-              Text(
-                'Get started by signing up',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
+
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: TextFormField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.blueGrey),
-                          ),
-                          prefixIcon: Icon(Icons.email),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Email is required';
-                          } else if (!EmailValidator.validate(value)) {
-                            return 'Enter a valid email address';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
+                    //Email Field
+                    EmailInput(emailController: _emailController),
+
                     SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: TextFormField(
-                        obscureText: obscureText,
-                        controller: _passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.blueGrey),
-                          ),
-                          prefixIcon: Icon(Icons.lock),
-                          suffixIcon: GestureDetector(onTap: (){
-                            setState(() {
-                              obscureText = !obscureText;
-                            });
-                          },
-                         child: () {
-    if (obscureText) {
-      return const Icon(Icons.visibility_outlined);
-    } else {
-      return const Icon(Icons.visibility_off_outlined);
-    }
-  }()
-                          )
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Password is required';
-                          } else if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
-                          }
-                          return null;
+
+                    //Password Input
+                    Passwordinput(
+                      text: "Password",
+                      obText: obscureText,
+                      passwordController: _passwordController,
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
                         },
+                        child: () {
+                          if (obscureText) {
+                            return const Icon(Icons.visibility_outlined);
+                          } else {
+                            return const Icon(Icons.visibility_off_outlined);
+                          }
+                        }(),
                       ),
+                      validatorFunc: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password is required';
+                        } else if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height * 0.03),
 
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: TextFormField(
-                        controller: _confirmPasswordController,
-                         obscureText: obscureText,
-                        decoration: InputDecoration(
-                          labelText: 'Confirm Password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.blueGrey),
-                          ),
-                          prefixIcon: Icon(Icons.lock),
-                         
-                        ),
-                       
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please confirm your password';
-                          } else if (value != _passwordController.text) {
-                            return "Passwords don't match";
-                          }
-                          return null;
-                        },
-                      ),
+                    //Confirm Password
+                    Passwordinput(
+                      text: "Password",
+                      obText: obscureText,
+                      passwordController: _confirmPasswordController,
+                      validatorFunc: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        } else if (value != _passwordController.text) {
+                          return "Passwords don't match";
+                        }
+                        return null;
+                      },
                     ),
                   ],
                 ),
               ),
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.025),
-              ElevatedButton(
-                onPressed: _register,
 
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  minimumSize: Size(
-                    MediaQuery.of(context).size.width * 0.8,
-                    50,
-                  ),
-                ),
-                child: Text(
-                  'Sign Up',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              //Sign up button
+              ButtonView(onPressed: () => {_register()}, buttonText: "Sign Up"),
               SizedBox(height: MediaQuery.of(context).size.height * 0.009),
 
-              Text('Have an Account Already? '),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()),
-                  );
-                },
-                child: Text(
-                  'Login',
-                  style: TextStyle(color: Colors.deepPurple),
-                ),
+              AccountPrompt(
+                onLoginTap:
+                    () => {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Login()),
+                      ),
+                    },
+                promptText: "Have an Account Already?",
+                actionText: "Login",
               ),
             ],
           ),

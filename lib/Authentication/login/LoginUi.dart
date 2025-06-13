@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 import 'package:notes/Authentication/register/RegisterUi.dart';
-import 'package:email_validator/email_validator.dart';
 import 'package:notes/Dashboard/DasboardUi.dart';
+import 'package:notes/api/api.dart';
+import 'package:notes/components/AccountPrompt.dart';
+import 'package:notes/components/ButtonView.dart';
+import 'package:notes/components/EmailInput.dart';
+import 'package:notes/components/HeroImage.dart';
+import 'package:notes/components/PasswordInput.dart';
+import 'package:notes/components/TitleView.dart';
+import 'package:notes/database/EncryptedDatabase.dart';
+
+import 'package:sonner_flutter/sonner_flutter.dart';
 
 class Login extends StatefulWidget {
   Login({Key? key}) : super(key: key);
@@ -12,6 +20,36 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final _formKey = GlobalKey<FormState>();
+  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool obscureText = true;
+
+  @override
+  void _register() async {
+    if (_formKey.currentState!.validate()) {
+      final registerSuccess = await login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (registerSuccess.status) {
+        EncryptedDatabase.instance.write(
+          "token",
+          registerSuccess.data["token"],
+        );
+        EncryptedDatabase.instance.write("isLoginDone", true);
+        Toast.success(context, "Login Successful");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (builder) => Dashboard()),
+        );
+      } else {
+        Toast.error(context, registerSuccess.message);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,103 +57,75 @@ class _LoginState extends State<Login> {
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-              LottieBuilder.asset(
-                'assets/Login.json',
-                height: 250,
-                width: 250,
-                repeat: false,
-                animate: true,
-                reverse: false,
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-              Text(
-                'Welcome Back,',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.001),
-              Text(
-                'Please Login In to continue',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              SizedBox(
-                width:MediaQuery.of(context).size.width *0.95,
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.blueGrey,width: 2),
-                      
-                      
-                    ),
-                    prefixIcon: Icon(Icons.email),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
+              // Hero iMAGE / Lottie assets
+              HeroImage(),
+
+              // Title and subtitle
+              TitleView(
+                title: "Welcome Back",
+                subtitle: "Please login to continue",
               ),
 
               SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-              SizedBox(
-                width:MediaQuery.of(context).size.width *0.95,
-                child: TextField(
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.blueGrey),
+
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    //Email Field
+                    EmailInput(emailController: _emailController),
+
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+
+                    //Password Input
+                    Passwordinput(
+                      text: "Password",
+                      obText: obscureText,
+                      passwordController: _passwordController,
+                      suffixIcon: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
+                        },
+                        child: () {
+                          if (obscureText) {
+                            return const Icon(Icons.visibility_outlined);
+                          } else {
+                            return const Icon(Icons.visibility_off_outlined);
+                          }
+                        }(),
+                      ),
+                      validatorFunc: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password is required';
+                        } else if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
-                    prefixIcon: Icon(Icons.lock),
-                  ),               
-                  obscureText: true,
+                  ],
                 ),
               ),
-         
-              SizedBox(height: MediaQuery.of(context).size.height * 0.09),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Dashboard(),
-                            ));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  minimumSize: Size(
-                    MediaQuery.of(context).size.width * 0.8,
-                    50,
-                  ),
-                ),
-                child: Text(
-                  'Login',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-             
-               Text("Don't have an account? "),
-                    GestureDetector(onTap: (){
+
+              SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+
+              //Sign up button
+              ButtonView(onPressed: () => {_register()}, buttonText: "Login"),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.009),
+
+              AccountPrompt(
+                onLoginTap:
+                    () => {
                       Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Register(),
-                            ));
-                    },child: Text('Register',style: TextStyle(color: Colors.deepPurple),))
-              
+                        context,
+                        MaterialPageRoute(builder: (context) => Register()),
+                      ),
+                    },
+                promptText: "Don't have an Account?",
+                actionText: "Register",
+              ),
             ],
           ),
         ),
