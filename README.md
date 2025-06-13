@@ -165,4 +165,4 @@ Distributed under the MIT License. See [LICENSE](https://choosealicense.com/lice
 
 ---
 
-**Made with ❤️ by [Arjun](https://github.com/NepMods)**
+**Made by [Arjun](https://github.com/NepMods) and [Anush](https://github.com/Anush980)**
