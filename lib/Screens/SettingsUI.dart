@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:notes/components/ButtonView.dart';
-import 'package:notes/components/ThemeProvider.dart';
+import 'package:notes/Screens/LoginUI.dart';
+import 'package:notes/Screens/Components/ButtonView.dart';
+import 'package:notes/Screens/Components/ThemeProvider.dart';
+import 'package:notes/EncryptedDatabase/EncryptedDatabase.dart';
 
 import 'package:provider/provider.dart';
 
@@ -37,7 +39,7 @@ class _ProfileSettingState extends State<ProfileSetting> {
                       Icon(Icons.account_circle, size: 30),
                       SizedBox(width: 10),
                       Text(
-                        'anush.stha232@gmail.com',
+                        EncryptedDatabase.instance.read("email"),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -66,7 +68,10 @@ class _ProfileSettingState extends State<ProfileSetting> {
             Container(
               width: 200,
               child: ButtonView(
-                onPressed: () {},
+                onPressed: () {
+                  EncryptedDatabase.instance.clear();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginUI()));
+                },
                 buttonText: "Logout",
                 backgroundColor: Colors.redAccent,
               ),

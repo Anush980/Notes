@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:notes/database/EncryptedDatabase.dart';
-import 'package:notes/models/note.dart';
+import 'package:notes/EncryptedDatabase/EncryptedDatabase.dart';
+import 'package:notes/Models/note.dart';
 
 String apiUrl(String endPoint) {
   return 'http://192.168.1.67:3000/$endPoint';
@@ -93,7 +93,6 @@ Future<BasicReturnType> login(String email, String password) async {
     null,
   );
   final jsondata = data.jsonData;
-  print("data: $jsondata");
   if (data.jsonData["error"] == false) {
     returnData.message = data.jsonData["message"];
     returnData.status = !data.jsonData["error"];
@@ -113,7 +112,6 @@ Future<BasicReturnType> getNotes() async {
     EncryptedDatabase.instance.read("token"),
   );
   final jsondata = data.jsonData;
-  print("data: $jsondata");
   if (data.jsonData["error"] == false) {
     returnData.message = data.jsonData["message"];
     returnData.status = !data.jsonData["error"];
@@ -132,12 +130,45 @@ Future<BasicReturnType> addNote(Note note) async {
     "POST",
     EncryptedDatabase.instance.read("token"),
   );
-  final jsondata = data.jsonData;
-  print(data.message);
   if (data.jsonData["error"] == false) {
     returnData.message = data.jsonData["message"];
     returnData.status = !data.jsonData["error"];
-    // returnData.data = data.jsonData["data"];
+  } else {
+    returnData.message = data.jsonData["message"];
+  }
+  return returnData;
+}
+
+Future<BasicReturnType> deleteNote(Note note) async {
+  final returnData = BasicReturnType();
+  final id = note.id;
+  final data = await doApi(
+    "notes/$id",
+    {},
+    "DELETE",
+    EncryptedDatabase.instance.read("token"),
+  );
+  if (data.jsonData["error"] == false) {
+    returnData.message = data.jsonData["message"];
+    returnData.status = !data.jsonData["error"];
+  } else {
+    returnData.message = data.jsonData["message"];
+  }
+  return returnData;
+}
+
+Future<BasicReturnType> updateNote(Note note) async {
+  final returnData = BasicReturnType();
+  final id = note.id;
+  final data = await doApi(
+    "notes/$id",
+    {"title": note.title, "body": note.body},
+    "PUT",
+    EncryptedDatabase.instance.read("token"),
+  );
+  if (data.jsonData["error"] == false) {
+    returnData.message = data.jsonData["message"];
+    returnData.status = !data.jsonData["error"];
   } else {
     returnData.message = data.jsonData["message"];
   }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:notes/api/api.dart';
-import 'package:notes/models/note.dart';
+import 'package:notes/Api/api.dart';
+import 'package:notes/Models/note.dart';
 import 'package:sonner_flutter/sonner_flutter.dart';
 
 class NoteEdit extends StatefulWidget {
+  final Note? editingNote;
+  NoteEdit({Key? key, this.editingNote}) : super(key: key);
+
   @override
   _NoteEditState createState() => _NoteEditState();
 }
@@ -11,11 +14,19 @@ class NoteEdit extends StatefulWidget {
 class _NoteEditState extends State<NoteEdit> {
   TextEditingController title = new TextEditingController();
   TextEditingController body = new TextEditingController();
+  bool editing = false;
 
-  void save() async {
+  void add() async {
     final note = new Note();
-    note.title = title.text + '\0';
-    note.body = body.text + '\0';
+    note.title = title.text;
+    note.body = body.text;
+    if (note.body == "" || note.title == "") {
+      Toast.info(context, "Empty Note, Skipping save");
+
+      Navigator.pop(context);
+      return;
+    }
+
     final adddone = await addNote(note);
     if (adddone.status) {
       Toast.success(context, "Note added");
@@ -25,8 +36,42 @@ class _NoteEditState extends State<NoteEdit> {
     }
   }
 
+  void update() async {
+    final note = new Note();
+    note.title = title.text;
+    note.body = body.text;
+    note.id = widget.editingNote!.id;
+    if (note.body == "" || note.title == "" || note.id == "") {
+      Toast.info(context, "Empty Note, Skipping update");
+
+      Navigator.pop(context);
+      return;
+    }
+
+    final adddone = await updateNote(note);
+    if (adddone.status) {
+      Toast.success(context, "Note updated");
+      Navigator.pop(context);
+    } else {
+      Toast.error(context, adddone.message);
+    }
+  }
+
+  void save() async {
+    if (editing) {
+      update();
+    } else {
+      add();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.editingNote != null) {
+      editing = true;
+      title.text = widget.editingNote!.title;
+      body.text = widget.editingNote!.body;
+    }
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: save,
