@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:notes/Authentication/login/LoginUi.dart';
-import 'package:notes/Authentication/register/RegisterUi.dart';
-import 'package:notes/Dashboard/AddNoteScreen.dart';
-import 'package:notes/Dashboard/DasboardUi.dart';
-import 'package:notes/Settings/profile_setting.dart';
-import 'package:notes/components/ThemeProvider.dart';
-import 'package:notes/database/EncryptedDatabase.dart';
+import 'package:notes/Screens/LoginUI.dart';
+import 'package:notes/Screens/DasboardUI.dart';
+import 'package:notes/Screens/Loading/LoadingOverlay.dart';
+import 'package:notes/Screens/Components/ThemeProvider.dart';
+import 'package:notes/EncryptedDatabase/EncryptedDatabase.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:sonner_flutter/sonner_flutter.dart';
@@ -34,12 +32,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark(useMaterial3: true),
+      navigatorObservers: [routeObserver],
 
       theme: ThemeData.light(useMaterial3: true),
-      home: (database.read("isLoginDone") ?? false) ? Dashboard() : Login(),
+      home: (database.read("isLoginDone") ?? false) ? Dashboard() : LoginUI(),
       themeMode: themeProvider.themeMode,
       builder: (context, child) {
-        return Stack(children: [child!, const Toaster()]);
+        return Stack(children: [child!, const Toaster(position: ToastPosition.bottom,), const LoadingOverlay()]);
       },
       // home:NoteEdit()
     );

@@ -1,6 +1,6 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:notes/components/FormElement.dart';
+import 'package:notes/Screens/Components/FormElement.dart';
 
 class EmailInput extends StatelessWidget {
   EmailInput({super.key, required this.emailController});
