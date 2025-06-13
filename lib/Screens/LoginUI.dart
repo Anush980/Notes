@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes/Screens/RegisterUI.dart';
-import 'package:notes/Screens/Loading/DasboardUI.dart';
+import 'package:notes/Screens/DasboardUI.dart';
 import 'package:notes/Api/api.dart';
 import 'package:notes/Screens/Components/AccountPrompt.dart';
 import 'package:notes/Screens/Components/ButtonView.dart';

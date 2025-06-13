@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notes/Screens/LoginUI.dart';
-import 'package:notes/Screens/Loading/DasboardUI.dart';
+import 'package:notes/Screens/DasboardUI.dart';
 import 'package:notes/Screens/Loading/LoadingOverlay.dart';
 import 'package:notes/Screens/Components/ThemeProvider.dart';
 import 'package:notes/EncryptedDatabase/EncryptedDatabase.dart';

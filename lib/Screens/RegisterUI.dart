@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:notes/Screens/LoginUI.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:notes/Screens/Loading/DasboardUI.dart';
+import 'package:notes/Screens/DasboardUI.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:notes/Api/api.dart';
 import 'package:notes/Screens/Components/AccountPrompt.dart';
