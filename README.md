@@ -10,7 +10,17 @@ This is the Flutter-based frontend for the [Notes App Backend](https://github.co
 This frontend is built to work with the [Notes App Backend](https://github.com/NepMods/notes-app-backend), which provides authentication and notes REST API.
 
 ---
+## 📸 Screenshots
 
+| Page 1                     | Page 2                     | Page 3            |
+|:--------------------------:|:--------------------------:|:-----------------:|
+| ![HomeLight](screenshot/1.png) | ![Setting](screenshot/2.png) | ![Home](screenshot/3.png) |
+
+| Page 4                       | Page 5                        |
+|:---------------------------:|:-----------------------------:|
+| ![HomeLight](screenshot/4.png) | ![HomeDark](screenshot/5.png) |
+
+---
 ## 🖼️ Features
 
 - JWT‑based user authentication  
