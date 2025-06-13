@@ -78,7 +78,10 @@ class _NoteEditState extends State<NoteEdit> {
         child: Icon(Icons.save),
       ),
       appBar: AppBar(
-        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: save),
+        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () async {
+     save(); 
+      Navigator.pop(context); 
+    }, ),
         title: TextField(
           controller: title,
           decoration: InputDecoration(
